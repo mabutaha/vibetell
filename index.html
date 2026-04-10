@@ -618,8 +618,15 @@ main {
 }
 .about-intro {
   font-size: 0.8rem; color: var(--muted); line-height: 1.7;
-  margin: 0 0 25px 0;
+  margin: 0 0 14px 0;
 }
+.about-verdicts {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.7;
+  margin: 0 0 8px 0; padding-left: 20px;
+  list-style: none;
+}
+.about-verdicts li { margin-bottom: 2px; }
+.about-verdicts strong { color: var(--text); }
 .about-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -901,6 +908,7 @@ footer {
         </div>
 
       </div>
+      <div class="conv-note" id="conv-note"></div>
     </div>
 
     <!-- RIGHT: VIBETELL -->
@@ -1096,7 +1104,13 @@ footer {
     </button>
     <div class="about-content" id="about-content">
       <h4>Introduction</h4>
-      <p class="about-intro">vibetell is a tool designed to analyze credentials for indicators of LLM generation. It does not evaluate for cryptographic randomness; instead, it identifies signatures of LLM-generation that password strength tools often miss.</p>
+      <p class="about-intro">vibetell is a tool designed to analyze credentials for indicators of LLM generation. It does not evaluate for cryptographic randomness; instead, it identifies signatures of LLM-generation that password strength tools often miss.<br>Each analysis returns one of three verdicts:</p>
+      <ul class="about-verdicts">
+        <li><strong>LLM Likely</strong> — Multiple signals fired with strong agreement.</li>
+        <li><strong>LLM Possible</strong> — One signal fired or partial agreement; warrants review.</li>
+        <li><strong>Inconclusive</strong> — No detection signals fired.</li>
+      </ul>
+      <p class="about-intro">These verdicts reflect signal intensity, not a conclusive determination of origin. A credential flagged as LLM Likely is consistent with LLM generation, but vibetell cannot prove how a credential was created.</p>
       <div class="about-sections">
 
         <!-- ROW 1: BLIND SPOT — full width -->
