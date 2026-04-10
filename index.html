@@ -853,7 +853,7 @@ footer {
                 <div class="popover" id="pop-entropy">Measures how unpredictable the character choices are. Higher means more varied characters. But a password that perfectly alternates character types can still score maximum entropy — it doesn't check ordering patterns.</div>
               </div>
             </div>
-            <div class="m-desc" id="entropy-desc">Character-frequency information content</div>
+            <div class="m-desc" id="entropy-desc">Shannon bits/char × password length</div>
           </div>
           <div class="m-val">
             <span class="m-num" id="entropy-val">—</span>
@@ -1629,11 +1629,11 @@ function renderStrip(pw){
 
 function renderComparison(pw){
   // Entropy
-  const e=entropy(pw), maxH=Math.log2(94);
-  set('entropy-val', e.toFixed(3)+' bits/char');
-  set('entropy-desc', `${(e/maxH*100).toFixed(0)}% of 94-char ASCII max`);
-  { const elbl=e<3?'Very weak':e<4?'Weak':e<5?'Fair':e<5.8?'Strong':'Very strong';
-    const ecls=e<3?'fail':e<4?'fail':e<5?'warn':'pass';
+  const e=entropy(pw), maxH=Math.log2(94), et=e*pw.length;
+  set('entropy-val', et.toFixed(1)+' bits');
+  set('entropy-desc', `${e.toFixed(3)} bits/char × len ${pw.length}`);
+  { const elbl=et<28?'Very weak':et<36?'Weak':et<60?'Fair':et<80?'Strong':'Very strong';
+    const ecls=et<28?'fail':et<36?'fail':et<60?'warn':'pass';
     $('entropy-verd').textContent=elbl; $('entropy-verd').className='m-verdict '+ecls; }
 
   // KeePass
