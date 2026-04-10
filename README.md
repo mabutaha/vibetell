@@ -89,4 +89,4 @@ FPR: At LLM_LIKELY: less than 1 in 100,000 flagged. At LLM_POSSIBLE: about 9 in 
 
 ---
 
-*This project was developed with AI assistance for statistical analysis, documentation, and code. Planning, validating and interpreting results, is human work.*
+<p align="center"><i>This project was developed with AI assistance for statistical analysis, documentation, and code. Planning, validating and interpreting results, is human work.</i></p>
