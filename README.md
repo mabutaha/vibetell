@@ -86,3 +86,7 @@ FPR: At LLM_LIKELY: less than 1 in 100,000 flagged. At LLM_POSSIBLE: about 9 in 
 - Credentials shorter than 12 characters are skipped. The engine is more reliable around after length 16.
 - Gibberish only; passwords with dictionary words or hybrid patterns (e.g. `Horse#Battery9!`) are out of scope.
 - Detection reliability varies by credential type. This will improve with future versions.
+
+---
+
+*This project was developed with AI assistance for statistical analysis, documentation, and code. Planning, validating and interpreting results, is human work.*
