@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vibetell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js" integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg:        #fafaf8;
+  --surface:   #ffffff;
+  --surface2:  #f5f4f0;
+  --border:    #e8e6e0;
+  --border2:   #d4d0c8;
+  --text:      #1a1917;
+  --muted:     #6b6760;
+  --dim:       #a8a49c;
+
+  --coral:     #e8624a;
+  --coral-bg:  #fdf1ee;
+  --coral-bd:  #f0c4ba;
+  --peach:     #d4850a;
+  --peach-bg:  #fdf6ec;
+  --peach-bd:  #f0d8a8;
+  --mint:      #2d8a5e;
+  --mint-bg:   #eef7f2;
+  --mint-bd:   #b8deca;
+  --lavender:  #6b5dd3;
+  --lav-bg:    #f2f0fc;
+  --lav-bd:    #ccc8f0;
+
+  --cl-U: #4a7fd4;
+  --cl-l: #2d8a5e;
+  --cl-D: #c87a0a;
+  --cl-S: #8b5dd4;
+
+  --success-bg:  #eef7f2;
+  --success-bd:  #b8deca;
+  --success-tx:  #2d8a5e;
+  --danger-bg:   #fdf1ee;
+  --danger-bd:   #f0c4ba;
+  --danger-tx:   #e8624a;
+
+  --r:   8px;
+  --rl: 12px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main { flex: 1; }
+
+/* HEADER */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+}
+.logo {
+  font-family: var(--mono);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.logo-dot { color: var(--coral); }
+.ver {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+.hdr-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hdr-link {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.hdr-link:hover { color: var(--text); }
+.hdr-ext-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 4px 11px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.hdr-ext-btn:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+.privacy-note {
+  font-size: 0.72rem;
+  color: var(--mint);
+  border: 1px solid var(--mint-bd);
+  background: var(--mint-bg);
+  border-radius: 20px;
+  padding: 3px 11px;
+  font-weight: 500;
+}
+
+/* MAIN */
+main {
+  flex: 1;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 60px 40px;
+}
+
+/* INPUT */
+.input-wrap { margin-bottom: 28px; }
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.pw-wrap { flex: 1; position: relative; }
+#pw-in {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  padding: 12px 44px 12px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+#pw-in:focus {
+  border-color: var(--lavender);
+  box-shadow: 0 0 0 3px var(--lav-bg);
+}
+#pw-in::placeholder { color: var(--dim); }
+.eye-btn {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer; color: var(--dim);
+  padding: 4px; line-height: 1;
+  transition: color 0.15s;
+}
+.eye-btn:hover { color: var(--muted); }
+.run-btn {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--r);
+  padding: 12px 24px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.run-btn:hover { background: #333; }
+.run-btn:active { transform: scale(0.98); }
+
+/* CLASS STRIP */
+.strip-wrap { margin-top: 10px; min-height: 32px; }
+.strip { display: flex; flex-wrap: wrap; gap: 2px; }.sc {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  line-height: 1.2;
+}
+.sc-U { color: var(--cl-U); background: #eef4fd; border-color: #c8d8f4; }
+.sc-l { color: var(--cl-l); background: var(--mint-bg); border-color: var(--mint-bd); }
+.sc-D { color: var(--cl-D); background: var(--peach-bg); border-color: var(--peach-bd); }
+.sc-S { color: var(--cl-S); background: var(--lav-bg); border-color: var(--lav-bd); }
+
+.strip-leg {
+  display: flex; gap: 12px; margin-top: 7px; align-items: center;
+}
+.leg-i {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.71rem; color: var(--muted);
+}
+.leg-sq {
+  width: 8px; height: 8px; border-radius: 2px;
+}
+
+/* HYBRID WARNING */
+.hybrid-msg {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--peach);
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+/* EXAMPLES */
+.ex-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.ex-lbl {
+  font-size: 0.72rem; color: var(--dim);
+  letter-spacing: 0.03em;
+  font-weight: 500; white-space: nowrap;
+}
+.ex-btn {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.ex-btn:hover { border-color: var(--border2); color: var(--text); }
+.ex-llm:hover { border-color: var(--coral-bd); color: var(--coral); background: var(--coral-bg); }
+.ex-rand:hover { border-color: var(--mint-bd); color: var(--mint); background: var(--mint-bg); }
+
+/* COLS */
+.cols {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.cols > .vt-panel { order: 1; }
+.cols > .panel    { order: 2; }
+
+/* PANEL */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.pnl-hdr {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 8px;
+  flex-shrink: 0;
+}
+.pnl-title {
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--muted);
+}
+.pnl-sub { font-size: 0.68rem; color: var(--dim); }
+.pnl-body { padding: 18px; flex: 1; }
+.conv-note {
+  display: none;
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem; color: var(--dim);
+  font-style: italic;
+  text-align: center;
+}
+
+/* METRIC ROWS */
+.m-row {
+  display: flex; align-items: flex-start;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 14px;
+}
+.m-row:first-child { padding-top: 0; }
+.m-row:last-child { border-bottom: none; padding-bottom: 0; }
+.m-info { flex: 1; min-width: 0; }
+.m-name {
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--text); margin-bottom: 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.m-desc { font-size: 0.72rem; color: var(--dim); line-height: 1.4; }
+.m-val { text-align: right; flex-shrink: 0; }
+.m-num {
+  font-family: var(--mono); font-size: 0.9rem;
+  font-weight: 500; color: var(--text);
+  display: block; margin-bottom: 2px;
+  transition: opacity 0.15s ease;
+}
+.m-verdict { font-size: 0.69rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; transition: opacity 0.15s ease; }
+.pass { color: var(--mint); }
+.warn { color: var(--peach); }
+.fail { color: var(--coral); }
+
+/* zxcvbn pips */
+.pip-row { display: flex; gap: 3px; margin-top: 5px; }
+.pip {
+  height: 4px; flex: 1; border-radius: 2px;
+  background: var(--border); transition: background 0.3s;
+}
+.pip.on { background: var(--mint); }
+.pip.on.s0 { background: var(--coral); }
+.pip.on.s1 { background: #d4700a; }
+.pip.on.s2 { background: var(--peach); }
+.pip.on.s3 { background: #5db882; }
+
+/* VIBETELL PANEL */
+.vt-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rl);
+  overflow: hidden;
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.vt-hdr {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.vt-logo { font-family: var(--mono); font-size: 0.95rem; font-weight: 500; color: var(--text); }
+.vt-logo-dot { color: var(--coral); }
+.vt-ver { font-family: var(--mono); font-size: 0.67rem; color: var(--dim); }
+.vt-body {
+  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* EMPTY STATE */
+.vt-empty {
+  text-align: center; padding: 36px 16px 28px;
+  color: var(--dim); font-size: 0.82rem; line-height: 1.8;
+  transition: opacity 0.2s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.vt-empty.fading { opacity: 0; }
+.vt-empty-icon { font-size: 1.8rem; margin-bottom: 10px; opacity: 0.35; }
+
+/* VERDICT */
+.vt-result { display: none; flex: 1; flex-direction: column; }
+.vt-result.animate { animation: fadeUp 0.25s ease both; }
+.vt-result .breakdown { margin-top: auto; }
+
+.vb {
+  display: inline-flex; align-items: center; gap: 7px;
+  border-radius: 6px; padding: 6px 12px;
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.vb-likely  { background: var(--coral-bg); color: var(--coral);  border: 1px solid var(--coral-bd); }
+.vb-poss    { background: var(--peach-bg); color: var(--peach);  border: 1px solid var(--peach-bd); }
+.vb-inc     { background: var(--mint-bg);  color: var(--mint);   border: 1px solid var(--mint-bd); }
+
+.vh {
+  font-size: 1.05rem; font-weight: 600;
+  line-height: 1.3; margin-bottom: 6px; color: var(--text);
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.info-btn {
+  flex-shrink: 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--dim); font-size: 0.78rem;
+  width: 18px; height: 18px;
+  border-radius: 50%; border: 1px solid var(--border2);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--sans);
+  transition: color 0.15s, border-color 0.15s;
+  margin-top: 2px;
+}
+.info-btn:hover { color: var(--muted); border-color: var(--muted); }
+
+.vsub {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.5;
+  margin-bottom: 18px;
+}
+.vh-toggle {
+  flex-shrink: 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--dim); padding: 2px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: color 0.15s;
+  margin-top: 3px;
+}
+.vh-toggle:hover { color: var(--muted); }
+#vh-arrow { transition: transform 0.2s; }
+#vh-arrow.open { transform: rotate(180deg); }
+.vt-context {
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+  padding: 0 22px;
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.25s ease, margin-bottom 0.25s ease;
+  margin-bottom: 0;
+}
+.vt-context.vis {
+  max-height: 120px;
+  margin-bottom: 20px;
+}
+
+/* SIGNAL STRENGTH BOXES */
+.sig-strength { margin-bottom: 18px; }
+.ss-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin-bottom: 8px;
+}
+.ss-boxes { display: flex; gap: 5px; }
+.ss-box {
+  width: 28px; height: 12px; border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  transition: background 0.3s ease, border-color 0.3s ease;
+  transform-origin: left center;
+}
+.ss-box.filled-likely  { background: var(--coral); border-color: var(--coral); }
+.ss-box.filled-poss    { background: var(--peach); border-color: var(--peach); }
+.ss-box.filled-inc     { background: var(--mint);  border-color: var(--mint); }
+.ss-box.pop { animation: popIn 0.18s ease both; }
+
+/* STRIP FADE */
+.strip-wrap { margin-top: 10px; min-height: 32px; }
+.strip { display: flex; flex-wrap: wrap; gap: 2px; animation: fadeIn 0.2s ease both; }
+.ss-box.filled-likely  { background: var(--coral); border-color: var(--coral); }
+.ss-box.filled-poss    { background: var(--peach); border-color: var(--peach); }
+.ss-box.filled-inc     { background: var(--mint);  border-color: var(--mint); }
+
+
+/* BREAKDOWN */
+.breakdown { border-top: 1px solid var(--border); padding-top: 13px; margin-top: 4px; }
+.bd-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  background: none; border: none; width: 100%; padding: 0;
+  cursor: pointer; color: var(--dim);
+  font-family: var(--sans); font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  user-select: none; transition: color 0.15s;
+}
+.bd-toggle:hover { color: var(--muted); }
+.bd-arrow { transition: transform 0.2s; }
+.bd-arrow.open { transform: rotate(180deg); }
+
+.bd-grid {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-top: 13px;
+}
+.bd-grid.vis { display: grid; }
+.bd-cell {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 10px 12px;
+  position: relative;
+}
+.bd-name {
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 4px;
+  display: flex; align-items: center; gap: 5px;
+}
+.bd-val {
+  font-family: var(--mono); font-size: 0.88rem;
+  font-weight: 500; color: var(--text);
+}
+.bd-note { font-size: 0.65rem; color: var(--dim); margin-top: 2px; }
+
+/* INFO POPOVERS — hidden, content used by explain box */
+.popover-wrap { position: relative; display: inline-block; }
+.popover { display: none; }
+
+/* EXPLAIN BOX */
+.explain-box {
+  display: none;
+  background: var(--text);
+  color: #f0efec;
+  border-radius: var(--r);
+  padding: 14px 18px 14px 16px;
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  font-family: var(--sans);
+  position: relative;
+  animation: fadeIn 0.15s ease;
+}
+.explain-box.vis { display: block; }
+.explain-box-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.02em;
+}
+.explain-close {
+  position: absolute;
+  top: 10px; right: 12px;
+  background: none; border: none;
+  color: #a8a49c; cursor: pointer;
+  font-size: 1.1rem; line-height: 1;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.explain-close:hover { color: #f0efec; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scaleX(0.6); } to { opacity: 1; transform: scaleX(1); } }
+
+/* SHORT PASSWORD WARNING */
+.short-warn {
+  display: none;
+  align-items: center; gap: 8px;
+  background: var(--peach-bg);
+  border: 1px solid var(--peach-bd);
+  border-radius: var(--r);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  color: var(--peach);
+  font-weight: 500;
+}
+.short-warn.vis { display: flex; }
+
+/* SIGNAL COLORS */
+.c-likely { color: var(--coral); }
+.c-poss   { color: var(--peach); }
+.c-inc    { color: var(--mint); }
+.c-ok     { color: var(--mint); }
+.c-warn   { color: var(--peach); }
+.c-bad    { color: var(--coral); }
+
+/* ABOUT */
+.about {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding-top: 0;
+}
+.about-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 18px 0 4px;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+  user-select: none;
+}
+.about-toggle:hover { color: var(--text); }
+.about-arrow { transition: transform 0.2s; }
+.about-arrow.open { transform: rotate(180deg); }
+.about-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+.about-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding-bottom: 16px;
+  align-items: start;
+}
+.about-sec { min-width: 0; display: flex; flex-direction: column; }
+.about-sec-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: 4px;
+}
+.about-sec h4 {
+  font-size: 0.92rem; font-weight: 600;
+  color: var(--text); margin-bottom: 14px; line-height: 1.35;
+}
+.about-sec p {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.7;
+  margin-top: 12px;
+}
+.about-content > h4 {
+  font-size: 0.92rem; font-weight: 600;
+  color: var(--text); margin-top: 20px; margin-bottom: 14px; line-height: 1.2;
+}
+.about-intro {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.7;
+  margin: 0 0 25px 0;
+}
+.about-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rl);
+  padding: 18px;
+}
+
+/* FAQ */
+#faq-section { border-top: none; }
+#faq-toggle { border-top: 1px solid var(--border); padding-top: 18px; }
+.faq-card { padding: 8px 0 8px; }
+.faq-item {
+  padding: 16px 20px;
+}
+.faq-item + .faq-item { border-top: 1px solid var(--border); }
+.faq-q {
+  font-size: 0.88rem; font-weight: 600;
+  color: var(--text); line-height: 1.35; margin-bottom: 8px;
+}
+.faq-a {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.7;
+}
+.faq-list {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.7;
+  margin-top: 6px; padding-left: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.faq-list li { padding-left: 4px; }
+.bs-table { display: flex; flex-direction: column; gap: 6px; }
+.bs-row {
+  display: flex; align-items: center;
+  border: 0.5px solid var(--border); border-radius: 8px; overflow: hidden;
+  background: transparent;
+}
+.bs-row.bs-flagged {
+  border: 1.5px solid var(--danger-bd);
+  background: var(--danger-bg);
+}
+.bs-tool {
+  width: 80px; flex-shrink: 0; padding: 10px 12px;
+  border-right: 0.5px solid var(--border);
+  font-size: 0.72rem; font-weight: 500; color: var(--muted);
+}
+.bs-row.bs-flagged .bs-tool {
+  border-right-color: var(--danger-bd);
+  color: var(--danger-tx);
+}
+.bs-detail {
+  flex: 1; padding: 10px 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: 0.75rem; color: var(--muted);
+}
+.bs-row.bs-flagged .bs-detail { color: var(--danger-tx); }
+.bs-badge {
+  font-size: 0.68rem; font-weight: 600;
+  padding: 2px 9px; border-radius: 20px; white-space: nowrap;
+  background: var(--success-bg); border: 1px solid var(--success-bd);
+  color: var(--success-tx);
+}
+.bs-badge.bad {
+  background: var(--danger-bg); border-color: var(--danger-bd);
+  color: var(--danger-tx);
+}
+.bs-pw {
+  font-family: var(--mono); font-size: 0.76rem;
+  color: var(--dim); margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+/* entropy reduction chain */
+.entropy-chain {
+  display: flex; align-items: flex-start;
+  margin-top: 14px; flex-wrap: wrap;
+  border-top: 1px solid var(--border); padding-top: 14px;
+}
+.ec-item { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 100px; }
+.ec-label {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--dim);
+}
+.ec-val {
+  font-size: 1.25rem; font-weight: 500; color: var(--text); line-height: 1;
+}
+.ec-val.danger { color: var(--danger-tx); }
+.ec-sub { font-size: 0.68rem; color: var(--dim); }
+.ec-arrow {
+  color: var(--border2); font-size: 1rem;
+  padding: 0 8px; padding-top: 16px; flex-shrink: 0;
+}
+
+/* distribution chart */
+.dist-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+}
+.dist-legend { display: flex; gap: 12px; flex-wrap: wrap; }
+.dist-leg-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; color: var(--muted);
+}
+.dist-leg-swatch { width: 9px; height: 9px; border-radius: 2px; }
+.dist-mode-btns {
+  display: flex; gap: 2px;
+  border: 0.5px solid var(--border2); border-radius: 6px; overflow: hidden;
+}
+.dist-mode-btn {
+  padding: 4px 10px; border: none; cursor: pointer;
+  font-size: 0.7rem; font-family: var(--sans);
+  color: var(--muted); background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.dist-mode-btn.active { background: var(--text); color: var(--bg); }
+.dist-canvas-wrap { position: relative; width: 100%; height: 160px; }
+.dist-axis-labels { display: flex; justify-content: space-between; margin-top: 4px; }
+.dist-axis-labels span { font-size: 0.65rem; color: var(--dim); }
+
+/* fpr stat boxes */
+.fpr-boxes { display: flex; flex-direction: column; }
+.fpr-box {
+  padding: 16px 0;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.fpr-box + .fpr-box { border-top: 1px solid var(--border); }
+.fpr-box-label {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--dim);
+}
+.fpr-box-val {
+  font-size: 1.9rem; font-weight: 500; color: var(--text); line-height: 1;
+}
+.fpr-box-sub { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+  background: var(--surface);
+  position: relative;
+}
+.ft-l { font-size: 0.72rem; color: var(--dim); }
+.ft-l a { color: var(--lavender); text-decoration: none; font-weight: 400; }
+.ft-l a:hover { text-decoration: underline; }
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+  main { padding: 24px 28px 40px; }
+  .cols { grid-template-columns: 1fr; }
+  .cols > .vt-panel { order: 1; }
+  .cols > .panel    { order: 2; }
+  .vt-panel { position: static; }
+  .about-sections { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  header { padding: 14px 16px; flex-wrap: wrap; }
+  .hdr-right { gap: 10px; }
+  main { padding: 18px 16px 32px; }
+  .input-row { flex-direction: column; }
+  .run-btn { width: 100%; }
+  .entropy-chain { flex-direction: column; gap: 12px; }
+  .ec-arrow { display: none; }
+  .bd-grid { grid-template-columns: 1fr; }
+  footer { padding: 12px 16px; }
+  .ft-l { font-size: 0.82rem; }
+  .pnl-title { font-size: 0.63rem; letter-spacing: 0.06em; }
+  .pnl-sub { font-size: 0.62rem; }
+  .vt-empty { font-size: 0.74rem; }
+  .ex-lbl { font-size: 0.65rem; }
+  .ex-btn { font-size: 0.68rem; padding: 5px 9px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">vibe<span class="logo-dot">·</span>tell<sup style="font-size:0.55rem;font-weight:500;color:var(--dim);letter-spacing:0.04em;vertical-align:super;margin-left:3px; display:none;"> (beta)</sup></span>
+  <div class="hdr-right">
+    <a href="#about-section" class="hdr-link" id="about-link" style="display:none">About</a>
+    <a href="https://github.com/mabutaha/vibetell" target="_blank" class="hdr-ext-btn">Repo ↗</a>
+    <a href="#" target="_blank" class="hdr-ext-btn">SCT paper ↗</a>
+  </div>
+</header>
+
+<main>
+  <section class="input-wrap">
+    <div class="ex-row">
+      <span class="ex-lbl">Try an example →</span>
+      <button class="ex-btn ex-llm" id="ex-llm-btn">LLM-generated</button>
+      <button class="ex-btn ex-rand" id="ex-rand-btn">Randomly-generated</button>
+    </div>
+    <div class="input-row">
+      <div class="pw-wrap">
+        <input id="pw-in" type="password" placeholder="Paste a secret to analyze…" autocomplete="off" spellcheck="false">
+        <button class="eye-btn" id="eye-btn" title="Show/hide">
+          <svg id="eye-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <button class="run-btn" id="run-btn">Analyze</button>
+    </div>
+
+    <div class="strip-wrap" id="strip-wrap"></div>
+    <div class="hybrid-msg" id="hybrid-msg">⚠ Contains a recognizable token ≥5 chars — credential is potentially a hybrid/passphrase. If it is, vibetell's analysis does not apply.</div>
+  </section>
+
+  <div class="short-warn" id="short-warn">&#9888; This password is shorter than 12 characters. vibetell requires at least 12 characters for reliable analysis.</div>
+
+  <div class="explain-box" id="explain-box">
+    <button class="explain-close" id="explain-close">&#10005;</button>
+    <div class="explain-box-title" id="explain-title"></div>
+    <div id="explain-text"></div>
+  </div>
+
+  <div class="cols">
+    <!-- LEFT: COMPARISON -->
+    <div class="panel">
+      <div class="pnl-hdr">
+        <span class="pnl-title">Conventional Strength Metrics</span>
+        <span class="pnl-sub">— what existing tools say</span>
+      </div>
+      <div class="pnl-body">
+
+        <div class="m-row">
+          <div class="m-info">
+            <div class="m-name">
+              Entropy
+              <div class="popover-wrap">
+                <button class="info-btn" data-pop="pop-entropy">i</button>
+                <div class="popover" id="pop-entropy">Measures how unpredictable the character choices are. Higher means more varied characters. But a password that perfectly alternates character types can still score maximum entropy — it doesn't check ordering patterns.</div>
+              </div>
+            </div>
+            <div class="m-desc" id="entropy-desc">Character-frequency information content</div>
+          </div>
+          <div class="m-val">
+            <span class="m-num" id="entropy-val">—</span>
+            <span class="m-verdict pass" id="entropy-verd"></span>
+          </div>
+        </div>
+
+        <div class="m-row">
+          <div class="m-info">
+            <div class="m-name">
+              KeePass (Simplified)
+              <div class="popover-wrap">
+                <button class="info-btn" data-pop="pop-keepass">i</button>
+                <div class="popover" id="pop-keepass">Estimates strength based on what types of characters are used and how long the password is. It doesn't look at the order of characters — so a perfectly alternating LLM password scores the same as a truly random one.</div>
+              </div>
+            </div>
+            <div class="m-desc" id="keepass-desc">Pool-size × length bit estimate</div>
+          </div>
+          <div class="m-val">
+            <span class="m-num" id="keepass-val">—</span>
+            <span class="m-verdict pass" id="keepass-verd"></span>
+          </div>
+        </div>
+
+        <div class="m-row">
+          <div class="m-info">
+            <div class="m-name">
+              zxcvbn
+              <div class="popover-wrap">
+                <button class="info-btn" data-pop="pop-zxcvbn">i</button>
+                <div class="popover" id="pop-zxcvbn">Estimates how long it would take to crack a password by looking for common patterns like dictionary words, keyboard walks, and dates. It's great at catching human patterns, but sees LLM passwords as random noise and rates them as strong.</div>
+              </div>
+            </div>
+            <div class="m-desc" id="zxcvbn-desc">Pattern-matching strength estimator</div>
+          </div>
+          <div class="m-val" style="min-width:120px;">
+            <span class="m-num" id="zxcvbn-val">—</span>
+            <span class="m-verdict pass" id="zxcvbn-verd"></span>
+            <div class="pip-row" id="pip-row">
+              <div class="pip"></div><div class="pip"></div>
+              <div class="pip"></div><div class="pip"></div>
+              <div class="pip"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="conv-note" id="conv-note"></div>
+    </div>
+
+    <!-- RIGHT: VIBETELL -->
+    <div class="vt-panel">
+      <div class="vt-hdr">
+        <span class="vt-logo">vibe<span class="vt-logo-dot">·</span>tell</span>
+        <span class="vt-ver">(beta)</span>
+      </div>
+      <div class="vt-body">
+
+        <div class="vt-empty" id="vt-empty">
+          <div class="vt-empty-icon">◌</div>
+          Enter a credential and press Analyze.
+          vibetell checks whether a credential's
+          pattern is consistent with autoregressive generation.
+        </div>
+
+        <div class="vt-result" id="vt-result">
+          <div class="vb" id="vb"></div>
+
+          <div class="vh">
+            <span id="vh-text"></span>
+            <button class="vh-toggle" id="vh-toggle" aria-expanded="false" title="Show details">
+              <svg id="vh-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="vsub" id="vsub"></div>
+          <div class="vt-context" id="vt-context"></div>
+
+          <div class="sig-strength">
+            <div class="ss-label">
+              Signal Strength
+              <div class="popover-wrap">
+                <button class="info-btn" data-pop="pop-sigstrength">i</button>
+                <div class="popover" id="pop-sigstrength">Shows how many detection signals fired and how strongly they agree. More filled boxes = more evidence. This is not a probability — it shows what was measured, not how likely a conclusion is.</div>
+              </div>
+            </div>
+            <div class="ss-boxes" id="ss-boxes">
+              <div class="ss-box"></div><div class="ss-box"></div>
+              <div class="ss-box"></div><div class="ss-box"></div>
+              <div class="ss-box"></div>
+            </div>
+          </div>
+
+          <div class="breakdown">
+            <button class="bd-toggle" id="bd-toggle" aria-expanded="false">
+              <span>Signal Breakdown</span>
+              <svg class="bd-arrow" id="bd-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            <div class="bd-grid" id="bd-grid">
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  SCT Rate
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-sct">i</button>
+                  <div class="popover" id="p-sct">How often two neighboring characters are the same type (uppercase, lowercase, digit, symbol). LLMs almost never repeat the same type back-to-back (~0.9%), while truly random passwords do it ~28% of the time.</div></div>
+                </div>
+                <div class="bd-val" id="bd-sct">—</div>
+                <div class="bd-note">threshold &lt; 0.024</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  E[SCT]
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-esct">i</button>
+                  <div class="popover" id="p-esct">What the SCT rate should be if the characters were randomly shuffled, based on this password's own mix of character types. Random passwords land close to this number; LLM passwords fall far below it.</div></div>
+                </div>
+                <div class="bd-val" id="bd-esct">—</div>
+                <div class="bd-note">expected under randomness</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Delta (Δ)
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-delta">i</button>
+                  <div class="popover" id="p-delta">The gap between the actual SCT and what's expected. Negative means the password avoids repeating character types more than chance would explain. LLMs average around −0.21; random passwords hover near zero.</div></div>
+                </div>
+                <div class="bd-val" id="bd-delta">—</div>
+                <div class="bd-note">SCT − E[SCT]</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Z-Score
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-zscore">i</button>
+                  <div class="popover" id="p-zscore">How far the SCT falls below what's normal, measured in standard deviations. More negative = more unusual. Values below −2.2 are very rare for random passwords. Shown for context.</div></div>
+                </div>
+                <div class="bd-val" id="bd-z">—</div>
+                <div class="bd-note">std. devs from baseline</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  LLR Total
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-llr">i</button>
+                  <div class="popover" id="p-llr">Compares the specific characters used against what a random generator would pick. Positive means the character choices look more like an LLM's preferences than pure randomness.</div></div>
+                </div>
+                <div class="bd-val" id="bd-llr">—</div>
+                <div class="bd-note">threshold &gt; 0</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  LLR Digits
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-llrd">i</button>
+                  <div class="popover" id="p-llrd">How LLM-like the digit choices are. LLMs favor certain digits over others in ways that differ from a uniform random draw. Positive means the digits lean toward LLM preferences.</div></div>
+                </div>
+                <div class="bd-val" id="bd-llrd">—</div>
+                <div class="bd-note">digit class component</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  LLR Letters
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-llrl">i</button>
+                  <div class="popover" id="p-llrl">How LLM-like the letter choices are. LLMs favor certain letters over others in ways that differ from a uniform random draw. Positive means the letters lean toward LLM preferences.</div></div>
+                </div>
+                <div class="bd-val" id="bd-llrl">—</div>
+                <div class="bd-note">letter class component</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  LLR Symbols
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-llrs">i</button>
+                  <div class="popover" id="p-llrs">How LLM-like the symbol choices are. LLMs concentrate on a small subset of symbols and rarely use others. Positive means the symbols lean toward LLM preferences.</div></div>
+                </div>
+                <div class="bd-val" id="bd-llrs">—</div>
+                <div class="bd-note">symbol class component</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Soft Indicators
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-soft">i</button>
+                  <div class="popover" id="p-soft">Extra context clues that don't affect the verdict. Rare symbols and repeated characters are more common in random passwords, but can appear in LLM output too. For longer passwords, repeats are expected by chance.</div></div>
+                </div>
+                <div class="bd-val" id="bd-soft">—</div>
+                <div class="bd-note">info only, no verdict effect</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Max Run
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-run">i</button>
+                  <div class="popover" id="p-run">The longest streak of consecutive characters of the same type. LLMs almost never go above 1 (they switch types every character). Random passwords average about 3, humans about 4.</div></div>
+                </div>
+                <div class="bd-val" id="bd-run">—</div>
+                <div class="bd-note">longest same-class streak</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Classes
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-cls">i</button>
+                  <div class="popover" id="p-cls">How many character types are present: uppercase, lowercase, digits, symbols. LLMs almost always use all 4. Random passwords and human-typed passwords sometimes use fewer.</div></div>
+                </div>
+                <div class="bd-val" id="bd-cls">—</div>
+                <div class="bd-note">U · l · D · S present</div>
+              </div>
+
+              <div class="bd-cell">
+                <div class="bd-name">
+                  Active Path
+                  <div class="popover-wrap"><button class="info-btn" data-pop="p-path">i</button>
+                  <div class="popover" id="p-path">Which combination of signals triggered the result. When both structure and vocabulary signals fire together, the evidence is strongest. A single signal alone is weaker but still noteworthy.</div></div>
+                </div>
+                <div class="bd-val" id="bd-path">—</div>
+                <div class="bd-note">signals fired</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about-section">
+    <button class="about-toggle" id="about-toggle">
+      <span>About vibetell</span>
+      <svg class="about-arrow" id="about-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+    <div class="about-content" id="about-content">
+      <h4>Introduction</h4>
+      <p class="about-intro">vibetell is a tool designed to analyze credentials for indicators of LLM generation. It does not evaluate for cryptographic randomness; instead, it identifies signatures of LLM-generation that password strength tools often miss.</p>
+      <div class="about-sections">
+
+        <!-- ROW 1: BLIND SPOT — full width -->
+        <div class="about-sec" style="grid-column: 1 / -1;">
+          <p class="about-sec-label">The blind spot</p>
+          <h4>The gap of existing tools</h4>
+          <p style="margin-top:0; margin-bottom:14px;">Modern strength meters measure what characters appear, not how they are ordered, and LLM-generated credentials score highly on all of them. Autoregressive generation appears to leave a structural fingerprint that CSPRNG passwords rarely carry — consistent character-class alternation. vibetell's core metric, the Same-Class Transition rate (SCT), measures exactly this. For the full methodology, see the paper.</p>
+          <div class="about-card">
+            <p class="bs-pw">G7$kL9#mQ2&amp;xP4!wN8@v</p>
+            <div class="bs-table">
+              <div class="bs-row">
+                <div class="bs-tool">Entropy</div>
+                <div class="bs-detail">
+                  <span>6.49 bits/char · 99% of theoretical max</span>
+                  <span class="bs-badge">Strong ✓</span>
+                </div>
+              </div>
+              <div class="bs-row">
+                <div class="bs-tool">KeePass (Simplified)</div>
+                <div class="bs-detail">
+                  <span>128.5 bits · pool 94 × length 20</span>
+                  <span class="bs-badge">Very strong ✓</span>
+                </div>
+              </div>
+              <div class="bs-row">
+                <div class="bs-tool">zxcvbn</div>
+                <div class="bs-detail">
+                  <span>Score 4/4 · centuries to crack offline</span>
+                  <span class="bs-badge">Very strong ✓</span>
+                </div>
+              </div>
+              <div class="bs-row bs-flagged">
+                <div class="bs-tool">vibetell</div>
+                <div class="bs-detail">
+                  <span>SCT 0.000 · LLR +19.41</span>
+                  <span class="bs-badge bad">LLM_LIKELY ✗</span>
+                </div>
+              </div>
+            </div>
+            <div class="entropy-chain">
+              <div class="ec-item">
+                <span class="ec-label">Apparent entropy</span>
+                <span class="ec-val">~105 bits</span>
+                <span class="ec-sub">what strength meters see</span>
+              </div>
+              <div class="ec-arrow">→</div>
+              <div class="ec-item">
+                <span class="ec-label">Minus class structure</span>
+                <span class="ec-val">~92 bits</span>
+                <span class="ec-sub">assumption of rigid cycling</span>
+              </div>
+              <div class="ec-arrow">→</div>
+              <div class="ec-item">
+                <span class="ec-label">With known biases</span>
+                <span class="ec-val danger">~73 bits</span>
+                <span class="ec-sub">in reality, it's even less secure.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 2 LEFT: SIGNAL DISTRIBUTION -->
+        <div class="about-sec">
+          <p class="about-sec-label">Signal distribution</p>
+          <h4>How LLM and random passwords score</h4>
+          <div class="about-card">
+            <div class="dist-toggle-row">
+              <div class="dist-legend">
+                <span class="dist-leg-item"><span class="dist-leg-swatch" style="background:var(--coral)"></span>LLM-generated</span>
+                <span class="dist-leg-item"><span class="dist-leg-swatch" style="background:#4a7fd4"></span>CSPRNG</span>
+              </div>
+              <div class="dist-mode-btns">
+                <button class="dist-mode-btn active" id="btnSCT" onclick="setDistMode('sct')">SCT only</button>
+                <button class="dist-mode-btn" id="btnBoth" onclick="setDistMode('both')">Multi-layered</button>
+              </div>
+            </div>
+            <div class="dist-canvas-wrap">
+              <canvas id="distChart"></canvas>
+            </div>
+            <div class="dist-axis-labels">
+              <span>← more LLM-like</span>
+              <span>more random →</span>
+            </div>
+          </div>
+          <p>The two distributions barely overlap. LLMs cycle character types so rigidly that the vast majority of their passwords have zero same-class adjacent pairs, pulling the entire distribution to the left. Toggle to multi-layered to add other signals that catch LLM-generated credentials harder to spot with structure alone.</p>
+        </div>
+
+        <!-- ROW 2 RIGHT: HOLDOUT VALIDATION -->
+        <div class="about-sec">
+          <p class="about-sec-label">Holdout validation</p>
+          <h4>Tested on 18 models from 12 labs it was never trained on</h4>
+          <div class="about-card">
+            <div class="fpr-boxes">
+              <div class="fpr-box">
+                <span class="fpr-box-label">Holdout recall · 752 passwords</span>
+                <span class="fpr-box-val">97.5%</span>
+                <span class="fpr-box-sub">Detected at LIKELY+POSSIBLE across 18 models from 12 labs, with zero overlap with training data.</span>
+              </div>
+              <div class="fpr-box">
+                <span class="fpr-box-label">False positive rate · CSPRNG</span>
+                <span class="fpr-box-val">&lt;0.001%</span>
+                <span class="fpr-box-sub">At LLM_LIKELY: less than 1 in 100,000 flagged. At LLM_POSSIBLE: about 9 in 1,000 (at length = 16).</span>
+              </div>
+            </div>
+          </div>
+          <p>The holdout experiment suggests the detection approach generalizes well, though recall varies across models. The low FPR makes vibetell a valuable tool in an auditing pipeline.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="about" id="faq-section">
+    <button class="about-toggle" id="faq-toggle">
+      <span>Frequently Asked Questions</span>
+      <svg class="about-arrow" id="faq-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+    <div class="about-content" id="faq-content">
+      <div style="padding-top: 14px; padding-bottom: 32px;">
+        <div class="about-card faq-card">
+
+          <div class="faq-item">
+            <p class="faq-q">Why should I care?</p>
+            <p class="faq-a">LLMs are embedded in the tools that write your code — Copilot, Claude Code, ChatGPT. If a coding agent generates credentials for a .env file or a service configuration on its own, the result looks strong by every conventional measure. A report by security lab <a href="https://irregular.com/publications/vibe-password-generation" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid currentColor;">Irregular&nbsp;↗</a> (2026) estimated an LLM-generated password carries roughly 27 bits of realistic entropy despite appearing to have ~98 bits — a gap large enough to make brute-force feasible. An attacker who correctly guesses a credential was LLM-generated can apply a mask brute-force attack and crack it in mere hours. The same problem applies to naive users who generate passwords with LLM tools. vibetell is the first tool to detect whether a credential seems LLM-generated.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">How is vibetell useful?</p>
+            <ol class="faq-list">
+              <li><em>A new verification axis.</em> Existing password strength tools measure one dimension: can this credential be guessed by a rule-based attack? None ask whether it has an anomalous structure. These are orthogonal questions. vibetell adds a missing axis to password strength assessment.</li>
+              <li><em>Credential auditing.</em> Scan codebases and config files for credentials silently generated by AI agents — ones that pass conventional strength checks but are actually weak. This can be an integration to tools like trufflehog.</li>
+              <li><em>Verifying CSPRNG delegation.</em> LLMs sometimes generate credentials directly instead of delegating to a secure generator as instructed. There is now a way to confirm that a key-generation task was most likely delegated to a secure generator.</li>
+              <li><em>Breach forensics.</em> Knowing whether a leaked credential is structurally consistent with LLM generation can narrow down how it was created and what else the same system may have produced. Ongoing testing suggests model-specific quirks might exist — particular character preferences and structural templates that differ by model.</li>
+              <li><em>Research and education.</em> A live demonstration of an easily measurable problem with LLM random sampling; and a concrete illustration of why high apparent entropy and actual strength are not the same thing.</li>
+            </ol>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Can vibetell detect passwords from any LLM?</p>
+            <p class="faq-a">Yes. The structural signal (SCT) is parameter-free — it measures deviation from a mathematical baseline, not a fitted profile. The vocabulary signal (LLR) was built from Claude and GPT output but fires on models outside that set. Our most likely hypothesis is that it's not capturing model-specific quirks — it's capturing what instruction-tuned autoregressive generation does to character preferences in general. In the same sense that no one would say zxcvbn is "fitted to specific humans" because it was built on human password data, vibetell isn't "fitted to specific LLMs".</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Why does this work on a single credential?</p>
+            <p class="faq-a">vibetell isn't measuring randomness — it's detecting indicators of autoregressive generation. One sample is enough when you know what pattern to look for, the same way malware signatures or EXIF metadata work. Most LLM passwords carry a specific, measurable structural fingerprint that genuinely random passwords almost rarely produce by chance.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Does this only apply to passwords?</p>
+            <p class="faq-a">The tool uses "password" throughout, but the detection applies to any gibberish looking credential — API keys, secret tokens, .env values, signing keys, and so on. The structural bias is a property of how LLMs generate character sequences, not of how those sequences are used. If an LLM produced it, the fingerprint is there regardless of what it's called.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Why doesn't vibetell analyze passwords containing words or recognizable patterns?</p>
+            <p class="faq-a">vibetell is designed specifically for gibberish credentials — strings that look random to the eye. Passwords built from words, phrases, or word-plus-number combinations occupy a completely different structural space and require different detection methods. More importantly, they're already caught by existing tools: zxcvbn and similar analyzers are excellent at identifying dictionary words, keyboard walks, and predictable substitutions. The blind spot vibetell fills is the credential that defeats all of those checks — pure gibberish that scores maximum entropy everywhere yet was produced by an LLM.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">What does INCONCLUSIVE mean?</p>
+            <p class="faq-a">No indicators of autoregressive generation were found. It does not mean the password is random or safe — the tool detects specific patterns, and their absence is honest silence, not a certificate of randomness.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Why LLM_POSSIBLE instead of LLM_LIKELY?</p>
+            <p class="faq-a">LLM_LIKELY requires both signals to agree. LLM_POSSIBLE means one fired without the other — usually the structure is LLM-like but the character choices don't match expected vocabulary, or vice versa. It's a real signal, not a near-miss.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Could a genuine random password get flagged?</p>
+            <p class="faq-a">Yes, but rarely. At LLM_LIKELY fewer than 1 in 100,000 genuinely random passwords are flagged — a threshold deliberately tuned for precision, so that a LIKELY verdict can be acted on directly. At LLM_POSSIBLE the net is wider by design, catching more LLM passwords at the cost of a higher false positive rate of about 3 in 1,000 across mixed lengths. The FPR is highest at shorter lengths and lower at longer lengths (about ~3 at lengths above 20 for vibetell beta).</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Does it work on short passwords?</p>
+            <p class="faq-a">Detection degrades below 16 characters — fewer adjacent pairs means less structural signal. The tool stays conservative rather than false-alarming: at length 12, the FPR at LLM_LIKELY is still near zero. The minimum supported length is 12 characters. Below that, the tool returns no verdict rather than guess.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">What if someone tries to evade detection?</p>
+            <p class="faq-a">The realistic threat is AI coding agents generating credentials silently, with no evasion intent. For deliberate evasion, the simplest path is just calling <code style="font-family:var(--mono);font-size:0.76rem">secrets.token_urlsafe()</code> — which vibetell correctly classifies as random, so the problem solves itself. In our testing, explicitly instructing models to avoid the pattern didn't produce independence.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Will this still work as models improve?</p>
+            <p class="faq-a">In our testing, the bias has been observed across different architectures, parameter scales, and labs. We don't have a clear answer to what would fix it short of training models to delegate credential generation to CSPRNG. Until then, we expect vibetell to correctly classify LLM-generated secrets in the vast majority of cases.</p>
+          </div>
+
+          <div class="faq-item">
+            <p class="faq-q">Is my password sent anywhere?</p>
+            <p class="faq-a">No. All analysis runs entirely in your browser. No data leaves your device. You can disconnect your internet after loading the page and it would still work.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="ft-l">
+    vibetell · All analysis runs locally in your browser. No passwords are transmitted.
+  </div>
+</footer>
+
+<script>
+// ── ENGINE (beta) ──────────────────────────
+const SCT_THR = 0.024, LLR_THR = 0.0, MIN_LEN = 12, MAX_LEN = 256, CONF_CAP = 0.99;
+
+const ENABLE_LENGTH_ADAPTIVE_LLR = true;
+const ENABLE_CHARSET_BYPASS = true;
+const ENABLE_PREFIX_STRIP = true;
+const ENABLE_LENGTH_ADAPTIVE_SCT = true;
+const ENABLE_SYMBOLLESS_LLR = true;
+
+const _SCT_THR_TABLE = [
+  [12, 0.024], [28, 0.0556], [36, 0.0714], [40, 0.0897],
+  [48, 0.0957], [56, 0.1182], [64, 0.1190], [80, 0.1456],
+  [96, 0.1526], [128, 0.1693],
+];
+
+const _SYM_LLR_TABLE = [
+  [16, 2.04], [20, 0.41], [24, -1.26], [28, -3.06],
+  [32, -4.88], [36, -7.35], [40, -8.52], [44, -10.57],
+  [48, -13.88], [56, -18.55], [64, -22.98], [80, -33.38],
+  [96, -42.70], [128, -64.62],
+];
+
+function sctThreshold(n) {
+  if (!ENABLE_LENGTH_ADAPTIVE_SCT) return SCT_THR;
+  let t = SCT_THR;
+  for (const [ml, th] of _SCT_THR_TABLE) { if (n >= ml) t = th; else break; }
+  return t;
+}
+
+function symLlrThreshold(n) {
+  if (!ENABLE_SYMBOLLESS_LLR) return LLR_THR;
+  let t = LLR_THR;
+  for (const [ml, th] of _SYM_LLR_TABLE) { if (n >= ml) t = th; else break; }
+  return t;
+}
+
+const PREFIX_PATTERNS = [
+  ['JWT_SECRET=', 'jwt-secret'],
+  ['SECRET_KEY=', 'secret-key'],
+  ['API_KEY=', 'api-key'],
+  ['API_SECRET=', 'api-secret'],
+  ['AUTH_TOKEN=', 'auth-token'],
+  ['ACCESS_TOKEN=', 'access-token'],
+  ['PRIVATE_KEY=', 'private-key'],
+  ['DATABASE_URL=', 'database-url'],
+  ['django-insecure-', 'django'],
+  [/^sk-ant-[a-z0-9]+-/, 'anthropic'],
+  ['sk-or-v1-', 'openrouter'],
+  ['sk-proj-', 'openai-proj'],
+  ['sk-', 'openai'],
+  ['ghp_', 'github-pat'],
+  ['gho_', 'github-oauth'],
+  ['ghs_', 'github-server'],
+  ['github_pat_', 'github-finegrained'],
+  ['glpat-', 'gitlab'],
+  ['AKIA', 'aws'],
+  ['whsec_', 'stripe-webhook'],
+  ['sk_live_', 'stripe-live'],
+  ['sk_test_', 'stripe-test'],
+  ['xoxb-', 'slack-bot'],
+  ['xoxp-', 'slack-user'],
+  ['npm_', 'npm'],
+  ['pypi-', 'pypi'],
+  ['SG.', 'sendgrid'],
+  ['sbp_', 'supabase'],
+  ['hvs.', 'vault'],
+];
+
+function stripPrefix(pw){
+  if(!ENABLE_PREFIX_STRIP) return [pw, null];
+  for(const [pat, label] of PREFIX_PATTERNS){
+    if(pat instanceof RegExp){
+      const m = pw.match(pat);
+      if(m){
+        const payload = pw.slice(m[0].length);
+        return payload.length >= MIN_LEN ? [payload, label] : [pw, null];
+      }
+    } else {
+      if(pw.startsWith(pat)){
+        const payload = pw.slice(pat.length);
+        return payload.length >= MIN_LEN ? [payload, label] : [pw, null];
+      }
+    }
+  }
+  return [pw, null];
+}
+
+const LTBL = (() => {
+  const d={'9':0.2313,'2':0.2195,'7':0.1885,'4':0.0991,'8':0.0959,'3':0.0511,'6':0.0442,'5':0.0387,'1':0.0284,'0':0.0035};
+  const u={'L':0.1817,'Q':0.1454,'K':0.1009,'P':0.0992,'R':0.0962,'T':0.0615,'X':0.0594,'Z':0.0504,'G':0.0400,'N':0.0392,'W':0.0266,'J':0.0142,'V':0.0139,'F':0.0113,'B':0.0112,'H':0.0112,'Y':0.0102,'D':0.0084,'M':0.0059,'A':0.0032,'S':0.0027,'C':0.0026,'E':0.0023,'U':0.0020,'I':0.0002,'O':0.0001};
+  const l={'m':0.1639,'v':0.1493,'x':0.1126,'n':0.1072,'p':0.0812,'w':0.0766,'q':0.0512,'k':0.0506,'z':0.0345,'t':0.0264,'r':0.0255,'j':0.0206,'c':0.0126,'s':0.0121,'f':0.0117,'b':0.0109,'d':0.0091,'h':0.0091,'e':0.0071,'y':0.0065,'u':0.0060,'g':0.0046,'a':0.0046,'l':0.0039,'o':0.0012,'i':0.0009};
+  const s={'#':0.2384,'$':0.2131,'@':0.1984,'!':0.1934,'&':0.0732,'^':0.0409,'*':0.0229,'%':0.0162,'?':0.0013,'+':0.0006,'_':0.0006,'-':0.0002,'=':0.0002,')':0.0001,'~':0.0001,'(':0.00005,'\\':0.00001,']':0.00001,'{':0.00001,'}':0.00001,'"':0.00001,"'":0.00001,',':0.00001,'.':0.00001,'/':0.00001,':':0.00001,';':0.00001,'<':0.00001,'>':0.00001,'[':0.00001,'`':0.00001,'|':0.00001};
+  const uni={D:1/10,U:1/26,l:1/26,S:1/32};
+  const t={};
+  [[d,'D'],[u,'U'],[l,'l'],[s,'S']].forEach(([fr,cls])=>{
+    Object.entries(fr).forEach(([ch,p])=>{ t[ch]=Math.log(Math.max(p,1e-6)/uni[cls]); });
+  });
+  return t;
+})();
+
+const LLM_SYMS = new Set('#$@!&^*%?+_-=)~('.split(''));
+
+function cls(c){ return c>='A'&&c<='Z'?'U':c>='a'&&c<='z'?'l':c>='0'&&c<='9'?'D':'S'; }
+function rareSyms(pw){ for(const c of pw){ const code=c.charCodeAt(0); if(!(code>=48&&code<=57||code>=65&&code<=90||code>=97&&code<=122)&&!LLM_SYMS.has(c)) return true; } return false; }
+function hasRpt(pw){ const s={}; for(const c of pw){ if(s[c]) return true; s[c]=true; } return false; }
+function ncdf(z){ if(z>6)return 1;if(z<-6)return 0; const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911; const sign=z>=0?1:-1,x=Math.abs(z)/Math.SQRT2,t=1/(1+p*x),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x); return 0.5*(1+sign*y); }
+
+function feats(pw){
+  const n=pw.length, sq=pw.split('').map(cls), cnt={U:0,l:0,D:0,S:0};
+  sq.forEach(c=>cnt[c]++);
+  let same=0; for(let i=0;i<n-1;i++) if(sq[i]===sq[i+1]) same++;
+  const sc=same/(n-1);
+  const A=Object.values(cnt).reduce((s,k)=>s+k*(k-1),0);
+  const B=Object.values(cnt).reduce((s,k)=>s+k*(k-1)*(k-2),0);
+  const C=Object.values(cnt).reduce((s,k)=>s+k*(k-1)*(k-2)*(k-3),0);
+  const Dv=Object.values(cnt).reduce((s,k)=>s+(k*(k-1))**2,0);
+  const es=A/(n*(n-1));
+  const pov=n>=3?B/(n*(n-1)*(n-2)):0;
+  const pno=n>=4?(C+A*A-Dv)/(n*(n-1)*(n-2)*(n-3)):0;
+  const m=n-1, vs=m*es*(1-es)+2*(m-1)*(pov-es*es)+(m-1)*(m-2)*(pno-es*es);
+  const sigma=Math.sqrt(Math.max(0,vs)/(m*m))||1e-9, zs=(sc-es)/sigma;
+  let llr=0,dl=0,ll=0,sl=0,dn=0,ln=0,sn=0;
+  for(const c of pw){ const v=LTBL[c]||0; llr+=v; const cl=cls(c); if(cl==='D'){dl+=v;dn++;}else if(cl==='U'||cl==='l'){ll+=v;ln++;}else{sl+=v;sn++;} }
+  let mr=1,cur=1; for(let i=1;i<n;i++){ if(sq[i]===sq[i-1]){cur++;mr=Math.max(mr,cur);}else cur=1; }
+  return {sc,es,zs,llr,dl,ll,sl,dn,ln,sn,hr:hasRpt(pw),rs:rareSyms(pw),mr,nc:Object.values(cnt).filter(v=>v>0).length,n,cnt};
+}
+
+function analyze(pw){
+  const n=pw.length;
+  for(const c of pw){ const code=c.charCodeAt(0); if(code<33||code>126) return {verdict:null,reason:'NON_ASCII'}; }
+  if(n<MIN_LEN) return {verdict:null,reason:'TOO_SHORT'};
+  if(n>MAX_LEN) return {verdict:null,reason:'TOO_LONG'};
+
+  const [analyzed, prefixLabel] = stripPrefix(pw);
+  const an = analyzed.length;
+
+  const f=feats(analyzed);
+  const sct0=f.sc===0;
+  const adaptiveSctThr = sctThreshold(an);
+  const sctF=f.sc<adaptiveSctThr;
+  const sctLenAdaptive = sctF && !sct0 && f.sc >= SCT_THR;
+
+  let llrThr = LLR_THR, symbollessShift = false;
+  if(ENABLE_SYMBOLLESS_LLR && f.cnt.S === 0 && f.nc >= 3){
+    llrThr = symLlrThreshold(an);
+    symbollessShift = (llrThr !== LLR_THR);
+  }
+  const llrF = f.llr > llrThr;
+
+  const rpInfo=an<=20, soft=(f.hr&&rpInfo?1:0)+(f.rs?1:0);
+
+  f.prefix = prefixLabel;
+  f.analyzedPortion = analyzed;
+
+  if(ENABLE_CHARSET_BYPASS && f.nc <= 2){
+    if(sct0){
+      const sc=1-ncdf(f.zs);
+      return {verdict:'LLM_LIKELY',path:'SCT₀ (reduced charset)',conf:Math.min(CONF_CAP,0.88+0.10*sc),f};
+    }
+    if(sctF){
+      const sc=1-ncdf(f.zs);
+      return {verdict:'LLM_LIKELY',path:'SCT (reduced charset)',conf:Math.min(CONF_CAP,0.82+0.15*sc),f};
+    }
+    return {verdict:'INCONCLUSIVE',path:'none (reduced charset)',conf:0,f};
+  }
+
+  // Priority 1: SCT=0 at length >= 20
+  if(sct0&&an>=20){
+    const lpc=f.llr/an;
+
+    let llrGate = -0.20;
+    if(ENABLE_LENGTH_ADAPTIVE_LLR){
+      if(an >= 50) llrGate = null; // no gate
+      else if(an >= 30) llrGate = -0.40;
+    }
+
+    const gatePass = llrGate === null || lpc > llrGate;
+
+    if(gatePass){
+      const sc=1-ncdf(f.zs), lb=llrF?0.10*Math.min(1,f.llr/20):0;
+      let conf;
+      if(llrGate === null && !llrF){
+        conf = Math.min(CONF_CAP, 0.92 + 0.05*sc);
+      } else {
+        conf = Math.min(CONF_CAP, 0.85+0.10*sc+lb);
+      }
+      return {verdict:'LLM_LIKELY',path:llrF?'SCT₀+LLR':'SCT₀ (structural)',conf,f};
+    }
+    const sc=1-ncdf(f.zs);
+    return {verdict:'LLM_POSSIBLE',path:'SCT₀ (structural)',conf:Math.min(0.80,0.65+0.15*sc-soft*0.03),f};
+  }
+
+  // Priority 2: Both SCT + LLR fire
+  if(sctF&&llrF){
+    const sc=1-ncdf(f.zs);
+    const lnorm = symbollessShift ? Math.min(1,(f.llr-llrThr)/10) : Math.min(1,f.llr/20);
+    let conf;
+    if(ENABLE_LENGTH_ADAPTIVE_LLR && an >= 40){
+      conf = Math.min(CONF_CAP, 0.78+0.12*sc+0.08*lnorm-soft*0.04);
+    } else {
+      conf = Math.min(CONF_CAP, 0.72+0.14*sc+0.12*lnorm-soft*0.04);
+    }
+    const sctPart = sctLenAdaptive ? 'SCT(len)' : 'SCT';
+    const suffix = symbollessShift ? ' (no-sym)' : '';
+    return {verdict:'LLM_LIKELY',path:sctPart+'+LLR'+suffix,conf,f};
+  }
+
+  // Priority 3: SCT fires alone
+  if(sctF&&!llrF){
+    const sc=1-ncdf(f.zs);
+    const sctLabel = sctLenAdaptive ? 'SCT(len)' : 'SCT';
+    if(ENABLE_LENGTH_ADAPTIVE_LLR && an >= 40 && !sctLenAdaptive){
+      const conf = Math.min(CONF_CAP, 0.82+0.12*sc-soft*0.05);
+      return {verdict:'LLM_LIKELY',path:'SCT (length-promoted)',conf,f};
+    }
+    return {verdict:'LLM_POSSIBLE',path:sctLabel+' only',conf:Math.min(0.80,0.55+0.25*sc-soft*0.05),f};
+  }
+
+  // Priority 4: LLR fires alone
+  if(!sctF&&llrF){
+    const lnorm = symbollessShift ? Math.min(1,(f.llr-llrThr)/10) : Math.min(1,f.llr/15);
+    const suffix = symbollessShift ? ' (no-sym)' : '';
+    return {verdict:'LLM_POSSIBLE',path:'LLR only'+suffix,conf:Math.min(0.75,0.45+0.20*lnorm),f};
+  }
+
+  return {verdict:'INCONCLUSIVE',path:'none',conf:0,f};
+}
+
+function entropy(pw){ const f={}; for(const c of pw) f[c]=(f[c]||0)+1; const n=pw.length; return -Object.values(f).reduce((s,k)=>s+(k/n)*Math.log2(k/n),0); }
+function kpbits(pw){ let pool=0; if(/[A-Z]/.test(pw))pool+=26; if(/[a-z]/.test(pw))pool+=26; if(/[0-9]/.test(pw))pool+=10; if(/[^A-Za-z0-9]/.test(pw))pool+=32; return pw.length*Math.log2(pool||1); }
+
+function boxCount(path, verdict){
+  if(path==='SCT₀+LLR') return 5;
+  if(path==='SCT+LLR' || path==='SCT(len)+LLR') return 4;
+  if(path==='SCT+LLR (no-sym)' || path==='SCT(len)+LLR (no-sym)') return 4;
+  if(path==='SCT₀ (structural)') return 3;
+  if(path==='SCT₀ (reduced charset)') return 4;
+  if(path==='SCT (reduced charset)') return 3;
+  if(path==='SCT (length-promoted)') return 3;
+  if(path==='SCT(len) (length-promoted)') return 3;
+  if(path==='LLR only' || path==='LLR only (no-sym)') return 2;
+  if(path==='SCT only' || path==='SCT(len) only') return 1;
+  return 0;
+}
+
+const explainData = {
+  'pop-entropy':    { title: 'Entropy', text: 'Measures how unpredictable the character choices are. Higher means more varied characters. But a password that perfectly alternates character types can still score maximum entropy — it doesn\'t check ordering patterns.' },
+  'pop-keepass':    { title: 'KeePass (Simplified)', text: 'A simplified version of KeePass\'s quality estimate. Uses character pool size × length to estimate bits of entropy. Unlike the full KeePass algorithm, it doesn\'t detect patterns like common passwords, l33t substitutions, or repeated sequences — so an LLM password scores the same as a truly random one.' },
+  'pop-zxcvbn':     { title: 'zxcvbn', text: 'Estimates how long it would take to crack a password by looking for common patterns like dictionary words, keyboard walks, and dates. It\'s great at catching human patterns, but sees LLM passwords as random noise and rates them as strong.' },
+  'pop-sigstrength':{ title: 'Signal Strength', text: '' }, 
+  'p-sct':          { title: 'SCT Rate', text: 'How often two neighboring characters share the same class (uppercase, lowercase, digit, symbol). LLMs almost never repeat the same class back-to-back, while truly random passwords do it regularly. This is vibetell\'s core detection signal.' },
+  'p-esct':         { title: 'Expected SCT', text: 'What the SCT rate should be if the characters were randomly shuffled, based on this password\'s own mix of character types. Random passwords land close to this number; LLM passwords fall far below it.' },
+  'p-delta':        { title: 'Delta', text: 'The gap between the actual SCT and what\'s expected. Negative means the password avoids repeating character classes more than chance would explain. LLM passwords show a large negative gap; random passwords hover near zero.' },
+  'p-zscore':       { title: 'Z-Score', text: 'How far the SCT falls from what\'s expected, measured in standard deviations. More negative means more unusual. Strongly negative values are very rare for random passwords. Shown for context.' },
+  'p-llr':          { title: 'LLR Total', text: 'Compares the specific characters used against what a random generator would pick. Positive means the character choices look more like an LLM\'s preferences than pure randomness.' },
+  'p-llrd':         { title: 'LLR Digits', text: 'How LLM-like the digit choices are. LLMs favor certain digits over others in ways that differ from a uniform random draw. Positive means the digits lean toward LLM preferences.' },
+  'p-llrl':         { title: 'LLR Letters', text: 'How LLM-like the letter choices are. LLMs favor certain letters over others in ways that differ from a uniform random draw. Positive means the letters lean toward LLM preferences.' },
+  'p-llrs':         { title: 'LLR Symbols', text: 'How LLM-like the symbol choices are. LLMs concentrate on a small subset of symbols and rarely use others. Positive means the symbols lean toward LLM preferences.' },
+  'p-soft':         { title: 'Soft Indicators', text: 'Extra context clues that don\'t affect the verdict. Rare symbols and repeated characters are more common in random passwords, but can appear in LLM output too. For longer passwords, repeats are expected by chance.' },
+  'p-run':          { title: 'Max Run', text: 'The longest streak of consecutive chars that share the same class (e.g. three lowercase in a row). LLMs tend to switch class on every character, producing very short runs. Random and human-typed passwords naturally produce longer streaks.' },
+  'p-cls':          { title: 'Classes', text: 'How many character types are present: uppercase, lowercase, digits, symbols. LLMs almost always use all 4. Random passwords and human-typed passwords sometimes use fewer.' },
+  'p-path':         { title: 'Active Path', text: 'Which combination of signals triggered the result. When both structure and vocabulary signals fire together, the evidence is strongest. A single signal alone is weaker but still noteworthy.' },
+};
+
+// ── UI HELPERS ────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function set(id, txt){ $(id).textContent = txt; }
+function setH(id, html){ $(id).innerHTML = html; }
+function col(val, bad, good){ return val ? `<span class="c-bad">${bad}</span>` : `<span class="c-ok">${good}</span>`; }
+function fmt(n, d=4){ return typeof n==='number' ? (n>=0?'+':'')+n.toFixed(d) : '—'; }
+function fmtPlain(n, d=4){ return typeof n==='number' ? n.toFixed(d) : '—'; }
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.info-btn');
+  if(btn){
+    e.stopPropagation();
+    const id = btn.dataset.pop;
+    const data = explainData[id];
+    if(!data) return;
+    const box = $('explain-box');
+    // If clicking same button while open, close it
+    if(box.classList.contains('vis') && box.dataset.activeId === id){
+      box.classList.remove('vis');
+      box.dataset.activeId = '';
+      return;
+    }
+    $('explain-title').textContent = data.title;
+    $('explain-text').textContent = data.text;
+    box.dataset.activeId = id;
+    box.classList.add('vis');
+    box.scrollIntoView({behavior:'smooth', block:'nearest'});
+    return;
+  }
+});
+
+$('explain-close').addEventListener('click', () => {
+  $('explain-box').classList.remove('vis');
+  $('explain-box').dataset.activeId = '';
+});
+
+function renderStrip(pw){
+  if(!pw){ $('strip-wrap').innerHTML=''; return; }
+  const [analyzed, prefixLabel] = stripPrefix(pw);
+  const seq=analyzed.split('').map(cls);
+  const leg=`<div class="strip-leg">
+    <span class="leg-i"><span class="leg-sq" style="background:var(--cl-U)"></span>Uppercase</span>
+    <span class="leg-i"><span class="leg-sq" style="background:var(--cl-l)"></span>Lowercase</span>
+    <span class="leg-i"><span class="leg-sq" style="background:var(--cl-D)"></span>Digit</span>
+    <span class="leg-i"><span class="leg-sq" style="background:var(--cl-S)"></span>Symbol</span>
+  </div>`;
+  const chars=analyzed.split('').map((c,i)=>{
+    const cl=seq[i];
+    const d=c==='<'?'&lt;':c==='>'?'&gt;':c==='&'?'&amp;':c;
+    return `<span class="sc sc-${cl}">${d}</span>`;
+  }).join('');
+  const prefixStr = prefixLabel ? pw.slice(0, pw.length - analyzed.length) : '';
+  const prefixNote = prefixLabel ? `<div style="font-size:0.7rem;color:var(--dim);margin-top:4px;font-family:var(--mono);">prefix stripped: <strong>${prefixStr.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</strong></div>` : '';
+  $('strip-wrap').innerHTML=`<div class="strip">${chars}</div>${prefixNote}${leg}`;
+}
+
+function renderComparison(pw){
+  // Entropy
+  const e=entropy(pw), maxH=Math.log2(94);
+  set('entropy-val', e.toFixed(3)+' bits/char');
+  set('entropy-desc', `${(e/maxH*100).toFixed(0)}% of 94-char ASCII max`);
+  { const elbl=e<3?'Very weak':e<4?'Weak':e<5?'Fair':e<5.8?'Strong':'Very strong';
+    const ecls=e<3?'fail':e<4?'fail':e<5?'warn':'pass';
+    $('entropy-verd').textContent=elbl; $('entropy-verd').className='m-verdict '+ecls; }
+
+  // KeePass
+  const kb=kpbits(pw);
+  set('keepass-val', kb.toFixed(1)+' bits');
+  set('keepass-desc', `Pool: ${/[A-Z]/.test(pw)?26:0}+${/[a-z]/.test(pw)?26:0}+${/[0-9]/.test(pw)?10:0}+${/[^A-Za-z0-9]/.test(pw)?32:0} × len ${pw.length}`);
+  { const klbl=kb<28?'Very weak':kb<36?'Weak':kb<60?'Fair':kb<80?'Strong':'Very strong';
+    const kcls=kb<28?'fail':kb<36?'fail':kb<60?'warn':'pass';
+    $('keepass-verd').textContent=klbl; $('keepass-verd').className='m-verdict '+kcls; }
+
+  // zxcvbn
+  if(typeof zxcvbn!=='undefined'){
+    const zx=zxcvbn(pw), sc=zx.score;
+    const lbls=['Very weak','Weak','Fair','Strong','Very strong'];
+    const cls2=['fail','fail','warn','pass','pass'];
+    set('zxcvbn-val', `${sc}/4 · 10^${zx.guesses_log10.toFixed(1)}`);
+    set('zxcvbn-desc', zx.crack_times_display.offline_slow_hashing_1e4_per_second+' (offline slow)');
+    $('zxcvbn-verd').textContent=lbls[sc]; $('zxcvbn-verd').className='m-verdict '+cls2[sc];
+    document.querySelectorAll('.pip').forEach((p,i)=>{ p.className='pip'+(i<=sc?` on s${sc}`:''); });
+  } else {
+    set('zxcvbn-val','unavailable');
+  }
+}
+
+function renderVibetell(res){
+  const emptyEl = $('vt-empty');
+  const resultEl = $('vt-result');
+
+  const doRender = () => {
+    emptyEl.style.display='none';
+    emptyEl.classList.remove('fading');
+    resultEl.style.display='flex';
+    resultEl.classList.remove('animate');
+    void resultEl.offsetWidth; // reflow to retrigger animation
+    resultEl.classList.add('animate');
+
+    const {verdict, path, conf, f} = res;
+
+    // Badge
+    const vb = $('vb');
+    if(verdict==='LLM_LIKELY'){
+      vb.className='vb vb-likely'; vb.textContent='LLM_LIKELY';
+    } else if(verdict==='LLM_POSSIBLE'){
+      vb.className='vb vb-poss'; vb.textContent='LLM_POSSIBLE';
+    } else {
+      vb.className='vb vb-inc'; vb.textContent='INCONCLUSIVE';
+    }
+
+    // Headline + popover
+    const headlines = {
+      'LLM_LIKELY':   'Indicators consistent with LLM generation',
+      'LLM_POSSIBLE': 'Partial indicators of LLM generation',
+      'INCONCLUSIVE': 'No indicators of LLM generation found',
+    };
+    set('vh-text', headlines[verdict]);
+
+    const popText = {
+      'LLM_LIKELY': {
+        'SCT₀+LLR':          'Analysis of the secret\'s structure and character vocabulary detected anomalies characteristic of autoregressive generation. This combination is highly unlikely in CSPRNG passwords.',
+        'SCT+LLR':           'Analysis of the secret\'s structure and character vocabulary detected anomalies characteristic of autoregressive generation. This combination is highly unlikely in CSPRNG passwords.',
+        'SCT₀ (structural)': 'Zero SCT detected on a long secret, highly unlikely structural signal. Vocabulary is neutral rather than confirming. Strong evidence of autoregressive origin.',
+        'SCT₀ (reduced charset)': 'Zero SCT in a reduced-charset secret (≤2 character classes). LLR is bypassed as meaningless for this charset. Structural evidence alone is definitive.',
+        'SCT (reduced charset)':  'SCT below threshold in a reduced-charset secret. LLR bypassed. Structural signal is strong for this charset.',
+        'SCT (length-promoted)':  'SCT below threshold on a long secret (≥40 chars). At this length, SCT alone is statistically overwhelming evidence.',
+      },
+      'LLM_POSSIBLE': {
+        'SCT only':          'Structural analysis (SCT) is below threshold, but character vocabulary is atypical. It might indicate an LLM whose character preferences differ.',
+        'LLR only':          'Character vocabulary matches LLM preferences, but structural analysis shows sufficient variation (SCT above threshold).',
+        'SCT₀ (structural)': 'Zero SCT detected but character vocabulary inconsistent with known LLM output. Rare CSPRNG coincidence or exotic generator cannot be ruled out.',
+      },
+      'INCONCLUSIVE': {
+        'none': 'Neither structural nor vocabulary analysis detected patterns associated with autoregressive generation. This does not confirm randomness, it means no evidence was found against it.',
+        'none (reduced charset)': 'Reduced charset detected (≤2 character classes). LLR is not meaningful for this charset, and structural transitions are within the normal range.',
+      },
+    };
+    const popContent = (popText[verdict]||{})[path] || '';
+    set('vt-context', popContent);
+    // reset toggle state on each new result
+    $('vt-context').classList.remove('vis');
+    $('vh-arrow').classList.remove('open');
+    $('vh-toggle').setAttribute('aria-expanded', 'false');
+
+    set('vsub', '');
+
+    // Signal strength boxes — staggered pop
+    const boxes = document.querySelectorAll('.ss-box');
+    const n = boxCount(path, verdict);
+    const boxCls = verdict==='LLM_LIKELY'?'filled-likely':verdict==='LLM_POSSIBLE'?'filled-poss':'filled-inc';
+    boxes.forEach((b,i)=>{
+      b.className = 'ss-box' + (i < n ? ' ' + boxCls : '');
+      if(i < n){
+        b.classList.add('pop');
+        b.style.animationDelay = (i * 0.055) + 's';
+      } else {
+        b.style.animationDelay = '';
+      }
+    });
+
+    // Update signal strength popover with path info
+    const pathDescs = {
+      'SCT₀+LLR':         'Firing signal: SCT₀+LLR — Zero same-class transitions and vocabulary both detected. Strongest possible signal.',
+      'SCT+LLR':           'Firing signal: SCT+LLR — Both structure and vocabulary signals detected.',
+      'SCT₀ (structural)': 'Firing signal: SCT₀ structural — Zero same-class transitions, but vocabulary doesn\'t confirm.',
+      'LLR only':          'Firing signal: LLR only — Vocabulary matches LLM preferences, but transition structure is within normal range.',
+      'SCT only':          'Firing signal: SCT only — Structural transitions are anomalous, but character vocabulary doesn\'t match known LLMs.',
+      'SCT₀ (reduced charset)': 'Firing signal: SCT₀ on reduced charset — Zero same-class transitions. LLR bypassed (meaningless for ≤2 character classes).',
+      'SCT (reduced charset)':  'Firing signal: SCT on reduced charset — Low same-class transitions. LLR bypassed (meaningless for ≤2 character classes).',
+      'SCT (length-promoted)':  'Firing signal: SCT on long secret — Same-class transitions below threshold at ≥40 characters. Length makes SCT alone statistically definitive.',
+      'none':              'No detection signals fired.',
+      'none (reduced charset)': 'No detection signals fired. Reduced charset (≤2 classes) — LLR was bypassed.',
+    };
+    explainData['pop-sigstrength'].text = 'Shows how many detection signals fired and how strongly they agree. More filled boxes = more evidence. This is not a probability. ' + (pathDescs[path]||'');
+
+    // Breakdown values
+    if(f){
+      const sctF=f.sc<SCT_THR, llrF=f.llr>LLR_THR;
+      setH('bd-sct', `<span class="${sctF?'c-bad':'c-ok'}">${fmtPlain(f.sc)}</span>`);
+      set('bd-esct', fmtPlain(f.es));
+      const d=f.sc-f.es;
+      setH('bd-delta', `<span class="${d<-0.10?'c-bad':''}">${fmt(d)}</span>`);
+      setH('bd-z', `<span class="${f.zs<-2.2?'c-bad':''}">${fmtPlain(f.zs,3)}</span>`);
+      setH('bd-llr', `<span class="${llrF?'c-bad':'c-ok'}">${fmt(f.llr,2)}</span>`);
+
+      function fmtCls(val,n){ if(n===0) return '<span style="color:var(--dim)">n/a</span>'; const c=val>0?'c-bad':val<-1?'c-ok':''; return `<span class="${c}">${fmt(val,2)}</span> <span style="color:var(--dim);font-size:.75em">(n=${n})</span>`; }
+      setH('bd-llrd', fmtCls(f.dl,f.dn));
+      setH('bd-llrl', fmtCls(f.ll,f.ln));
+      setH('bd-llrs', fmtCls(f.sl,f.sn));
+
+      const softs=[];
+      if(f.rs) softs.push('rare syms');
+      if(f.hr) softs.push(f.n>20?'repeats (len>20, expected)':'repeats');
+      set('bd-soft', softs.length?softs.join(' · '):'none');
+      setH('bd-run', `<span class="${f.mr===1?'c-bad':f.mr>=3?'c-ok':''}">${f.mr}</span>`);
+      set('bd-cls', `${f.nc}/4`);
+      setH('bd-path', `<span class="${verdict==='LLM_LIKELY'?'c-bad':verdict==='LLM_POSSIBLE'?'c-warn':'c-ok'}">${path}</span>`);
+    }
+
+    const doStrike = verdict === 'LLM_LIKELY' || verdict === 'LLM_POSSIBLE';
+    $('conv-note').style.display = doStrike ? 'block' : 'none';
+  };
+
+  // If result already visible, fade it out briefly then re-render
+  if(resultEl.style.display === 'flex'){
+    resultEl.style.transition = 'opacity 0.12s ease';
+    resultEl.style.opacity = '0';
+    setTimeout(() => {
+      resultEl.style.transition = '';
+      resultEl.style.opacity = '';
+      doRender();
+    }, 120);
+  } else if(emptyEl.style.display !== 'none'){
+    emptyEl.classList.add('fading');
+    setTimeout(doRender, 200);
+  } else {
+    doRender();
+  }
+}
+
+// ── MAIN FLOW ─────────────────────────────────────────────
+let vis=false;
+$('eye-btn').addEventListener('click',()=>{ vis=!vis; $('pw-in').type=vis?'text':'password'; });
+
+// ── EXAMPLE BUTTONS ───────────────────────────────────────────────
+const LLM_EXAMPLES = [
+  'G7$kL9#mQ2&xP4!wN8@v',
+  'G7$kL9#mQ2&xP4!w',
+  'P7!nQ2@xL9#kR4&mS6$t',
+  'Kx9#mP2$vL7@nQ4!',
+  'H4@jR8!vN2#bW6$kM3^p',
+  '8k9LpQ2xVn$mYz7@wR4eT!bH3cA6dF1g',
+  's&9Lk#2!mP8$qRz@7vXy^CbV*3jFh%6wNtQ+4aDfG&1zUcY_7eR!tHmNpQ$wS',
+  'q8ZxFv2YwTn3Lk9Jr5uD0mP4cH7sE2aB1yN6GdR8VwQ=',
+  'X9vT2kLm8QpR4sW7zYcD5fH1JgN6uB3aE0xVqP2oZrM8tCwL',
+  'c8e1f3a4-6b2d-4d9a-8f7c-1a3e5b9d2c6f',
+  '4e9a7c2d-1b3f-4d6a-8c5e-2f1a9b7d3c6e',
+  '7c1e9a3f5d2b8e4a6c0f1d9b3a7e5c2f8b4d6a9c1e3f7b2d0a5c8e6f4b1d9a3c2e7f5b8a',
+  'b8c2d7a1e9f3c5b4a6d0e2f7c9a1b3d5e8f0c2a4',
+  'django-insecure-K7$xP2mQ9vB4nR8wF3jL6yC1dH5sA0t',
+  'sk-proj-G7$kL9#mQ2&xP4!wN8@vR3bT5dF',
+];
+let llmIdx = 0;
+
+const RAND_EXAMPLES = [
+  "T%+V7H<~?BLdp(",
+  "G1(C/1s`!w>:/U+(sP=8-t,lmg4YREL{W.O:",
+  "9V[Nt?M!}6UgGk]'wHvf!I._#ms",
+  "*]]2+\"W!MIkDfs}{|bn::%5dBg)~J\\r",
+  "!Xxs2v*=R`Z?%osXDObJ9f}+|VSbdK;t`",
+  "Ep4&17c6)2arR*M*:YO",
+  'hNdDLpxml48C0to&*dcV@!3#',
+  '%gUopS&FDUaUZ!zsK',
+  'TJWbe#*I8VLPZDhm',
+  "Ve5$-&.t5alBke[B$Omm@{^bSGUIj6UZl+/+r*.tJ",
+  "<4~\\Q[|GRfeR'[b?9ITd]&0_[/|z,ufRRyq",
+  "t)N=E2k_yt!v-/M's}{oYh0LmV:>kD$u%",
+  "7oOjOCN8@&=LXRd/N*j",
+  'Pd$M6xV%1%JwDReb#Q',
+  'ngsjtvpgZM#4tWX6KsD1',
+  'ww@j!eIm#lRio3TGVoYZiz',
+  '&$jFu*vQ%j0gGHgZ',
+  'W!7!csmRKR$l6MsElPB#v%',
+];
+let randIdx = 0;
+
+$('ex-llm-btn').addEventListener('click',()=>{
+  $('pw-in').value = LLM_EXAMPLES[llmIdx];
+  llmIdx = (llmIdx + 1) % LLM_EXAMPLES.length;
+  $('pw-in').type = 'text'; vis = true;
+  run();
+});
+
+$('ex-rand-btn').addEventListener('click',()=>{
+  $('pw-in').value = RAND_EXAMPLES[randIdx];
+  randIdx = (randIdx + 1) % RAND_EXAMPLES.length;
+  $('pw-in').type = 'text'; vis = true;
+  run();
+});
+
+$('run-btn').addEventListener('click',run);
+$('pw-in').addEventListener('keydown',e=>{ if(e.key==='Enter') run(); });
+
+$('vh-toggle').addEventListener('click',()=>{
+  const c=$('vt-context'), a=$('vh-arrow'), btn=$('vh-toggle');
+  const open = c.classList.toggle('vis');
+  a.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open);
+});
+
+$('bd-toggle').addEventListener('click',()=>{
+  const g=$('bd-grid'), a=$('bd-arrow'), t=$('bd-toggle');
+  const open=g.classList.toggle('vis');
+  a.classList.toggle('open',open);
+  t.setAttribute('aria-expanded',open);
+});
+
+let chartsInitialized = false;
+
+$('about-toggle').addEventListener('click',()=>{
+  const c=$('about-content'), a=$('about-arrow');
+  const opening = c.style.maxHeight === '0px' || c.style.maxHeight === '';
+  if(opening){
+    if(!chartsInitialized){ initAboutCharts(); chartsInitialized=true; }
+    c.style.maxHeight = c.scrollHeight + 'px';
+    a.classList.add('open');
+  } else {
+    c.style.maxHeight = '0px';
+    a.classList.remove('open');
+  }
+});
+
+$('faq-toggle').addEventListener('click',()=>{
+  const c=$('faq-content'), a=$('faq-arrow');
+  const opening = c.style.maxHeight === '0px' || c.style.maxHeight === '';
+  if(opening){
+    c.style.maxHeight = c.scrollHeight + 'px';
+    a.classList.add('open');
+  } else {
+    c.style.maxHeight = '0px';
+    a.classList.remove('open');
+  }
+});
+
+$('about-link').addEventListener('click',(e)=>{
+  e.preventDefault();
+  const s=$('about-section');
+  const c=$('about-content'), a=$('about-arrow');
+  if(c.style.maxHeight === '0px' || c.style.maxHeight === ''){
+    if(!chartsInitialized){ initAboutCharts(); chartsInitialized=true; }
+    c.style.maxHeight = c.scrollHeight + 'px';
+    a.classList.add('open');
+  }
+  s.scrollIntoView({behavior:'smooth'});
+});
+
+function run(){
+  const pw=$('pw-in').value;
+  $('hybrid-msg').style.display='none';
+  $('short-warn').classList.remove('vis');
+
+  if(!pw){
+    $('strip-wrap').innerHTML='';
+    $('vt-empty').style.display='flex';
+    $('vt-result').style.display='none';
+    return;
+  }
+
+  renderStrip(pw);
+
+  if(pw.length>0 && pw.length<MIN_LEN){
+    $('short-warn').classList.add('vis');
+  }
+
+  // Briefly fade comparison values before updating
+  document.querySelectorAll('.m-num, .m-verdict').forEach(el => {
+    el.style.opacity = '0';
+  });
+  setTimeout(() => {
+    renderComparison(pw);
+    document.querySelectorAll('.m-num, .m-verdict').forEach(el => {
+      el.style.opacity = '';
+    });
+  }, 120);
+
+  if(typeof zxcvbn!=='undefined'&&pw.length>=12){
+    const [payload] = stripPrefix(pw);
+    const zx=zxcvbn(payload);
+    if(zx.sequence&&zx.sequence.some(t=>t.pattern!=='bruteforce'&&t.token&&t.token.length>=5)){
+      $('hybrid-msg').style.display='flex';
+    }
+  }
+
+  const res=analyze(pw);
+
+  if(!res.verdict){
+    $('vt-empty').style.display='flex';
+    $('vt-result').style.display='none';
+    const msgs={
+      TOO_SHORT:`Too short for reliable analysis (min ${MIN_LEN} chars). Short passwords can coincidentally alternate classes.`,
+      TOO_LONG:`Exceeds maximum length (${MAX_LEN} chars).`,
+      NON_ASCII:'Contains non-printable or non-ASCII characters. Engine requires printable ASCII (codes 33–126).',
+    };
+    $('vt-empty').innerHTML=`<div class="vt-empty-icon">⊘</div>${msgs[res.reason]||'Unknown input error.'}`;
+    return;
+  }
+
+  renderVibetell(res);
+}
+
+// ── ABOUT CHARTS (lazy init) ───────────────────────────────────────
+let distChartInst = null;
+
+function initAboutCharts(){
+  const coral = '#e8624a';
+  const blue  = '#4a7fd4';
+
+  function gaussian(x, mu, sigma){
+    return Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+  }
+  const xs = Array.from({length: 81}, (_, i) => i);
+  const sctLLM    = xs.map(x => gaussian(x/100, 0.006, 0.016) * 1.5);
+  const sctCSPRNG = xs.map(x => gaussian(x/100, 0.280, 0.095) * 8.5);
+  const bothLLM   = xs.map(x => gaussian(x/100, 0.003, 0.010) * 1.1);
+  const bothCSPRNG= xs.map(x => gaussian(x/100, 0.300, 0.088) * 8.5);
+
+  distChartInst = new Chart(document.getElementById('distChart'), {
+    type: 'line',
+    data: {
+      labels: xs,
+      datasets: [
+        { data: sctLLM,    borderColor: coral, backgroundColor: 'rgba(232,98,74,0.12)',  fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+        { data: sctCSPRNG, borderColor: blue,  backgroundColor: 'rgba(74,127,212,0.09)', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 350 },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: 0 } }
+    }
+  });
+
+  window._distData = { sctLLM, sctCSPRNG, bothLLM, bothCSPRNG };
+}
+
+function setDistMode(mode){
+  if(!distChartInst) return;
+  const d = window._distData;
+  distChartInst.data.datasets[0].data = mode === 'both' ? d.bothLLM    : d.sctLLM;
+  distChartInst.data.datasets[1].data = mode === 'both' ? d.bothCSPRNG : d.sctCSPRNG;
+  distChartInst.update();
+  document.getElementById('btnSCT').classList.toggle('active',  mode === 'sct');
+  document.getElementById('btnBoth').classList.toggle('active', mode === 'both');
+}
+</script>
+</body>
+</html>
