@@ -76,7 +76,7 @@ python3 vibetell_cli.py --unknown secrets.txt --signals
 
 | Dataset | n | LIKELY + POSSIBLE | LIKELY only |
 |---------|---|-------------------|-------------|
-| Training (3 models) | 5,566 | 99.4% | 93.5% |
+| Calibration (3 models) | 5,566 | 99.4% | 93.5% |
 | Holdout (18 models, unseen) | 752 | 97.5% | 86.8% |
 
 FPR: At LLM_LIKELY: less than 1 in 100,000 flagged. At LLM_POSSIBLE: about 9 in 1,000 (at length = 16).
