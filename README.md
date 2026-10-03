@@ -8,7 +8,7 @@ Engine that attempts to detect LLM-generated credentials.
 
 [![vibetell](preview_img.png)](https://mabutaha.github.io/vibetell/)
 
-<p align="center"><i>vibetell is in beta. Full engine documentation and the accompanying paper explaining SCT are forthcoming.</i></p>
+<p align="center"><i>vibetell is no longer WIP. Any questions about the documentation or the unreleased paper, you may contact me through my blog.</i></p>
 
 ---
 
@@ -89,4 +89,4 @@ FPR: At LLM_LIKELY: less than 1 in 100,000 flagged. At LLM_POSSIBLE: about 9 in 
 
 ---
 
-<p align="center"><i>This project was developed with AI assistance for statistical analysis, documentation, and code.<br>Planning, validating and interpreting results, is human work.</i></p>
+<p align="center"><i>vibetell was developed with AI assistance for statistical analysis, documentation, and code.<br>Planning, validating and interpreting results, is human work.</i></p>
